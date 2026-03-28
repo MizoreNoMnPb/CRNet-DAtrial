@@ -46,7 +46,6 @@ class BracketIREPlusDataset(BaseDataset):
 
         raws = torch.from_numpy(np.float32(np.array(self.raw_images[idx]))) / (2**10 - 1)
         gt = torch.from_numpy(np.float32(self.gt_images[idx]))
-
         raws, gt = self._crop_patch(raws, gt, self.patch_size, self.scale)
 
         return {'gt': gt, # [4, H, W]
@@ -128,7 +127,9 @@ def read_images(obj):
     # NOTE: `multiprocessing.Pool` will duplicate given object for each process.
     print('Starting to load images via multiple imreaders')
     pool = Pool() # use all threads by default
-    for _ in tqdm(pool.imap(imreader, iter_obj(len(obj.names), obj)), total=len(obj.names)):
+    for i in tqdm(range(len(obj.names))):
+        imreader((i, obj))
+    # for _ in tqdm(pool.imap(imreader, iter_obj(len(obj.names), obj)), total=len(obj.names)):
         pass
     pool.close()
     pool.join()

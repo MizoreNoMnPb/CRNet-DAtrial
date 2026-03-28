@@ -21,14 +21,12 @@ def setup_seed(seed=0):
 	torch.backends.cudnn.benchmark = True
 
 if __name__ == '__main__':
-	setup_seed(seed=0)
+	setup_seed(seed=2026)
 	
 	opt = TrainOptions().parse()
 	dataset_train = create_dataset(opt.dataset_name, 'train', opt)
 	dataset_size_train = len(dataset_train)
 	print('The number of training images = %d' % dataset_size_train)
-
-
 
 
 	model = create_model(opt)

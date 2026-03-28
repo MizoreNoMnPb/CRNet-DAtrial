@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import yaml
 from util import util
 import torch
 import models
@@ -15,16 +16,28 @@ class BaseOptions():
     def __init__(self):
         """Reset the class; indicates the class hasn't been initailized"""
         self.initialized = False
+        
+    def load_from_yaml(self, yaml_file):
+        """Load options from a yaml file."""
+        with open(yaml_file, 'r') as f:
+            self.config = yaml.safe_load(f)
+        return self.config
 
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
+        # yaml loading parameters
+        parser.add_argument('--config_path', type=str, default='', help='The path to yaml file.')
+        parser.add_argument('--override', type=str, default='', 
+                            help='The parser you want to override, separated by `,`. eg, `--override "batch_size=48,lr=0.0002,name=experiment_v2"` ')
+        parser.add_argument('--save_override', type=str2bool, default=False, help='only can be set to True when --override is not empty.')
         # data parameters
         parser.add_argument('--dataroot', type=str, default="data")
-        parser.add_argument('--dataset_name', type=str, default=['bracketire'], nargs='+')
+        parser.add_argument('--dataset_name', type=str, default=['bracketireplus'], nargs='+')
         parser.add_argument('--max_dataset_size', type=int, default=inf)
         # parser.add_argument('--scale', type=int, default=4, help='Super-resolution scale.')
         parser.add_argument('--frame_num', type=int, default=5)
-        parser.add_argument('--batch_size', type=int, default=2)
+        parser.add_argument('--beta', type=int, default=4)
+        parser.add_argument('--batch_size', type=int, default=4)
         parser.add_argument('--patch_size', type=int, default=128)
         parser.add_argument('--shuffle', type=str2bool, default=True)
         parser.add_argument('-j', '--num_dataloader', default=4, type=int)
@@ -34,7 +47,7 @@ class BaseOptions():
         parser.add_argument('--gpu_ids', type=str, default='all',
                 help='Separate the GPU ids by `,`, using all GPUs by default. '
                      'eg, `--gpu_ids 0`, `--gpu_ids 2,3`, `--gpu_ids -1`(CPU)')
-        parser.add_argument('--checkpoints_dir', type=str, default='./ckpt')
+        parser.add_argument('--checkpoints_dir', type=str, default='./checkpoint',)
         parser.add_argument('-v', '--verbose', type=str2bool, default=True)
         parser.add_argument('--suffix', default='', type=str)
 
@@ -45,7 +58,7 @@ class BaseOptions():
         parser.add_argument('--block', type=str, default='Convnext')
         parser.add_argument('--load_path', type=str, default='',
                 help='Will load pre-trained model if load_path is set')
-        parser.add_argument('--load_iter', type=int, default=[500], nargs='+',
+        parser.add_argument('--load_iter', type=int, default=[0], nargs='+',
                 help='Load parameters if > 0 and load_path is not set. '
                      'Set the value of `last_epoch`')
         parser.add_argument('--chop', type=str2bool, default=False)
@@ -55,7 +68,7 @@ class BaseOptions():
         parser.add_argument('--exposure', type=int, default=1)
 
         # training parameters
-        parser.add_argument('--init_type', type=str, default='default',
+        parser.add_argument('--init_type', type=str, default='kaiming',
                 choices=['default', 'normal', 'xavier',
                          'kaiming', 'orthogonal', 'uniform'],
                 help='`default` means using PyTorch default init functions.')
@@ -108,6 +121,22 @@ class BaseOptions():
 
         # get the basic options
         opt, _ = parser.parse_known_args()
+        
+        if opt.config_path:
+            yaml_config = self.load_from_yaml(opt.config_path)
+            parser.set_defaults(**yaml_config)
+            
+            if opt.override:
+                override_args = opt.override.split(',')
+                for override in override_args:
+                    k, v = override.split('=')
+                    if k in yaml_config:
+                        print('Overriding %s: %s -> %s' % (k, yaml_config[k], v))
+                    else:
+                        print('Adding new option %s: %s' % (k, v))
+                    parser.set_defaults(**{k: type(yaml_config.get(k, v))(v)})
+        
+        opt, _ = parser.parse_known_args()  # parse again with new defaults
 
         # modify model-related parser options
         model_name = opt.model
@@ -126,7 +155,7 @@ class BaseOptions():
         It will save options into a text file / [checkpoints_dir] / opt.txt
         """
         message = ''
-        message += '----------------- Options ---------------\n'
+        message += ' ----------------- Options ---------------\n'
         for k, v in sorted(vars(opt).items()):
             comment = ''
             default = self.parser.get_default(k)
@@ -144,6 +173,16 @@ class BaseOptions():
         with open(file_name, 'wt') as opt_file:
             opt_file.write(message)
             opt_file.write('\n')
+         
+        if opt.save_override and opt.override != '':  
+            yaml_root = os.path.dirname(opt.config_path)
+            current_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())
+            yaml_file = os.path.join(yaml_root, 'config_%s_%s.yaml' % ('train' if self.isTrain else 'test') % current_time)
+            with open(yaml_file, 'w') as yaml_opt_file:
+                yaml_config = {k: v for k, v in vars(opt).items()
+                               if not k.startwith('_') and not callable(v)}
+                yaml.dump(yaml_config, yaml_opt_file, default_flow_style=False)
+    
 
     def parse(self):
         opt = self.gather_options()
@@ -200,7 +239,7 @@ class BaseOptions():
             util.prompt('GPUs(computing capability < 4) have been disabled')
 
         if len(opt.gpu_ids) > 0:
-            assert torch.cuda.is_available(), 'No cuda available !!!'
+            assert torch.cuda.is_available(), 'No cuda available !'
             torch.cuda.set_device(opt.gpu_ids[0])
             print('The GPUs you are using:')
             for gpu_id in opt.gpu_ids:

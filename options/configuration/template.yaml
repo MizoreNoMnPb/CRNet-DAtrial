@@ -1,0 +1,67 @@
+# the default parser for this net is available at ./CRNet/options/base_options.py
+# here offers a template
+
+# config file parser
+# config_path: None # For common sence, you must set is argument before reading this file
+override: None
+save_override: None
+
+# data parser
+dataroot: "data/custom_dataset"
+dataset_name: ["bracketire", "extra_dataset"]
+max_dataset_size: 1000
+frame_num: 7
+batch_size: 4
+patch_size: 256
+shuffle: true
+num_dataloader: 8
+drop_last: false
+
+# device parser
+gpu_ids: "0,1,2"
+checkpoints_dir: "./checkpoints/exp1"
+verbose: true
+suffix: "v1"
+
+# model parser
+name: "experiment_v1"
+model: "cat"
+block: "SwinTransformer"
+load_path: "./pretrained_models/model.pth"
+load_iter: [1000, 2000]
+chop: true
+crop_patch: 64
+self_weight: 0.8
+neg_weight: 0.2
+exposure: 2
+
+# training parser
+init_type: "kaiming"
+init_gain: 0.01
+optimizer: "Adam"
+niter: 5000
+niter_decay: 500
+lr_policy: "cosine"
+lr_decay_iters: 500
+lr: 0.0002
+
+# optimizer parser
+load_optimizers: true
+weight_decay: 0.0001
+beta1: 0.9
+beta2: 0.999
+momentum: 0.9
+alpha: 0.95
+
+# visualization parser
+print_freq: 50
+test_every: 5
+save_epoch_freq: 2
+calc_metrics: true
+save_imgs: true
+visual_full_imgs: true
+
+# net arch parser
+n_scales: 4
+n_feats: 128
+rgb_range: 255

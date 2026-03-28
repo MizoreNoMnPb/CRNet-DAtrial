@@ -1,0 +1,50 @@
+----------------- Options ---------------
+                    alpha: 0.99                          
+               batch_size: 36                            
+                    beta1: 0.9                           
+                    beta2: 0.999                         
+                    block: Convnext                      
+             calc_metrics: True                          
+          checkpoints_dir: /data/Hongkai/CRNet-DAtrial/checkpoint
+                     chop: False                         
+               crop_patch: 48                            
+                 dataroot: /data/Hongkai/datasets/Syn_Plus
+             dataset_name: bracketireplus                	[default: ['bracketireplus']]
+                drop_last: True                          
+                 exposure: 1                             
+                frame_num: 5                             
+                  gpu_ids: all                           
+                init_gain: 0.02                          
+                init_type: kaiming                       
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: [0]]
+          load_optimizers: False                         
+                load_path:                               
+                       lr: 0.0001                        
+           lr_decay_iters: 27                            
+                lr_policy: step                          
+         max_dataset_size: inf                           
+                    model: cat                           
+                 momentum: 0                             
+                  n_feats: 64                            
+                 n_scales: 3                             
+                     name: track1                        
+               neg_weight: 1                             
+                    niter: 400                           
+              niter_decay: 0                             
+           num_dataloader: 4                             
+                optimizer: Adam                          
+               patch_size: 128                           
+               print_freq: 500                           
+                rgb_range: 1                             
+          save_epoch_freq: 1                             
+                save_imgs: True                          
+              self_weight: 1                             
+           serial_batches: False                         	[default: None]
+                  shuffle: True                          
+                   suffix:                               
+               test_every: 1                             
+                  verbose: True                          
+         visual_full_imgs: False                         
+             weight_decay: 0.01                          
+----------------- End -------------------

@@ -120,7 +120,7 @@ class TMRNet(nn.Module):
         # optical flow
         self.spynet = SPyNet()
         if opt.isTrain:
-            N.load_spynet(self.spynet, './spynet/spynet_20210409-c6c1bd09.pth')
+            N.load_spynet(self.spynet, '/data/Hongkai/CRNet-DAtrial/spynet/spynet_20210409-c6c1bd09.pth')
 
         self.dcn_alignment = DeformableAlignment(mid_channels, mid_channels, 3, padding=1, deform_groups=8,
                                                  max_residue_magnitude=max_residue_magnitude)
