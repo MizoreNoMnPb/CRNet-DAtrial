@@ -1,5 +1,6 @@
 /options/configuration/*.yaml
 !/options/configuration/template.yaml
+/checkpoint
 
 # ---------------------------------------------------------------------- github python.gitignore template start ----------------------------------------------------------------------
 # Byte-compiled / optimized / DLL files
