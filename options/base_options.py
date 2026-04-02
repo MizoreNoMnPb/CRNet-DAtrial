@@ -26,84 +26,84 @@ class BaseOptions():
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
         # yaml loading parameters
-        parser.add_argument('--config_path', type=str, default='', help='The path to yaml file.')
-        parser.add_argument('--override', type=str, default='', 
+        parser.add_argument('--config_path',        type=str,       default='', help='The path to yaml file.')
+        parser.add_argument('--override',           type=str,       default='', 
                             help='The parser you want to override, separated by `,`. eg, `--override "batch_size=48,lr=0.0002,name=experiment_v2"` ')
-        parser.add_argument('--save_override', type=str2bool, default=False, help='only can be set to True when --override is not empty.')
+        parser.add_argument('--save_override',      type=str2bool,  default=False, help='only can be set to True when --override is not empty.')
         # data parameters
-        parser.add_argument('--dataroot', type=str, default="data")
-        parser.add_argument('--dataset_name', type=str, default=['bracketireplus'], nargs='+')
-        parser.add_argument('--max_dataset_size', type=int, default=inf)
+        parser.add_argument('--dataroot',           type=str,       default="data")
+        parser.add_argument('--dataset_name',       type=str,       default=['bracketireplus'], nargs='+')
+        parser.add_argument('--max_dataset_size',   type=int,       default=inf)
         # parser.add_argument('--scale', type=int, default=4, help='Super-resolution scale.')
-        parser.add_argument('--frame_num', type=int, default=5)
-        parser.add_argument('--beta', type=int, default=4)
-        parser.add_argument('--batch_size', type=int, default=4)
-        parser.add_argument('--patch_size', type=int, default=128)
-        parser.add_argument('--shuffle', type=str2bool, default=True)
-        parser.add_argument('-j', '--num_dataloader', default=4, type=int)
-        parser.add_argument('--drop_last', type=str2bool, default=True)
+        parser.add_argument('--frame_num',          type=int,       default=5)
+        parser.add_argument('--beta',               type=int,       default=4)
+        parser.add_argument('--batch_size',         type=int,       default=4)
+        parser.add_argument('--patch_size',         type=int,       default=128)
+        parser.add_argument('--shuffle',            type=str2bool,  default=True)
+        parser.add_argument('-j', '--num_dataloader', type=int,     default=4)
+        parser.add_argument('--drop_last',          type=str2bool,  default=True)
 
         # device parameters
-        parser.add_argument('--gpu_ids', type=str, default='all',
-                help='Separate the GPU ids by `,`, using all GPUs by default. '
-                     'eg, `--gpu_ids 0`, `--gpu_ids 2,3`, `--gpu_ids -1`(CPU)')
-        parser.add_argument('--checkpoints_dir', type=str, default='./checkpoint',)
-        parser.add_argument('-v', '--verbose', type=str2bool, default=True)
-        parser.add_argument('--suffix', default='', type=str)
+        parser.add_argument('--gpu_ids',            type=str,       default='all',
+                            help='Separate the GPU ids by `,`, using all GPUs by default. '
+                                 'eg, `--gpu_ids 0`, `--gpu_ids 2,3`, `--gpu_ids -1`(CPU)')
+        parser.add_argument('--checkpoints_dir',    type=str,       default='./checkpoint',)
+        parser.add_argument('-v', '--verbose',      type=str2bool,  default=True)
+        parser.add_argument('--suffix',             type=str,       default='')
 
         # model parameters
-        parser.add_argument('--name', type=str, default='track1',
-                help='Name of the folder to save models and logs.')
-        parser.add_argument('--model', type=str, default='cat')
-        parser.add_argument('--block', type=str, default='Convnext')
-        parser.add_argument('--load_path', type=str, default='',
-                help='Will load pre-trained model if load_path is set')
-        parser.add_argument('--load_iter', type=int, default=[0], nargs='+',
-                help='Load parameters if > 0 and load_path is not set. '
-                     'Set the value of `last_epoch`')
-        parser.add_argument('--chop', type=str2bool, default=False)
-        parser.add_argument('--crop_patch', type=int, default=48)
-        parser.add_argument('--self_weight', type=float, default=1)
-        parser.add_argument('--neg_weight', type=float, default=1)
-        parser.add_argument('--exposure', type=int, default=1)
+        parser.add_argument('--name',               type=str,       default='track1',
+                            help='Name of the folder to save models and logs.')
+        parser.add_argument('--model',              type=str,       default='cat')
+        parser.add_argument('--block',              type=str,       default='Convnext')
+        parser.add_argument('--load_path',          type=str,       default='',
+                            help='Will load pre-trained model if load_path is set')
+        parser.add_argument('--load_iter',          type=int,       default=[0], nargs='+',
+                            help='Load parameters if > 0 and load_path is not set. '
+                                'Set the value of `last_epoch`')
+        parser.add_argument('--chop',               type=str2bool,  default=False)
+        parser.add_argument('--crop_patch',         type=int,       default=48)
+        parser.add_argument('--self_weight',        type=float,     default=1)
+        parser.add_argument('--neg_weight',         type=float,     default=1)
+        parser.add_argument('--exposure',           type=int,       default=1)
 
         # training parameters
-        parser.add_argument('--init_type', type=str, default='kaiming',
-                choices=['default', 'normal', 'xavier',
-                         'kaiming', 'orthogonal', 'uniform'],
-                help='`default` means using PyTorch default init functions.')
-        parser.add_argument('--init_gain', type=float, default=0.02)
-        parser.add_argument('--optimizer', type=str, default='Adam',
-                choices=['Adam', 'SGD', 'RMSprop'])
-        parser.add_argument('--niter', type=int, default=1000)
-        parser.add_argument('--niter_decay', type=int, default=0)
-        parser.add_argument('--lr_policy', type=str, default='step')
-        parser.add_argument('--lr_decay_iters', type=int, default=200)
-        parser.add_argument('--lr', type=float, default=0.0001)
+        parser.add_argument('--init_type',          type=str,       default='kaiming',
+                            choices=['default', 'normal', 'xavier',
+                                    'kaiming', 'orthogonal', 'uniform'],
+                            help='`default` means using PyTorch default init functions.')
+        parser.add_argument('--init_gain',          type=float,     default=0.02)
+        parser.add_argument('--optimizer',          type=str,       default='Adam',
+                            choices=['Adam', 'SGD', 'RMSprop'])
+        parser.add_argument('--niter',              type=int,       default=1000)
+        parser.add_argument('--niter_decay',        type=int,       default=0)
+        parser.add_argument('--lr_policy',          type=str,       default='step')
+        parser.add_argument('--lr_decay_iters',     type=int,       default=200)
+        parser.add_argument('--lr',                 type=float,     default=0.0001)
 
         # Optimizer
-        parser.add_argument('--load_optimizers', type=str2bool, default=False,
-                help='Loading optimizer parameters for continuing training.')
-        parser.add_argument('--weight_decay', type=float, default=0)
+        parser.add_argument('--load_optimizers',    type=str2bool,  default=False,
+                            help='Loading optimizer parameters for continuing training.')
+        parser.add_argument('--weight_decay',       type=float,     default=0)
         # Adam
-        parser.add_argument('--beta1', type=float, default=0.9)
-        parser.add_argument('--beta2', type=float, default=0.999)
+        parser.add_argument('--beta1',              type=float,     default=0.9)
+        parser.add_argument('--beta2',              type=float,     default=0.999)
         # SGD & RMSprop
-        parser.add_argument('--momentum', type=float, default=0)
+        parser.add_argument('--momentum',           type=float,     default=0)
         # RMSprop
-        parser.add_argument('--alpha', type=float, default=0.99)
+        parser.add_argument('--alpha',              type=float,     default=0.99)
 
         # visualization parameters
-        parser.add_argument('--print_freq', type=int, default=100)
-        parser.add_argument('--test_every', type=int, default=1)
-        parser.add_argument('--save_epoch_freq', type=int, default=1)
-        parser.add_argument('--calc_metrics', type=str2bool, default=True)
-        parser.add_argument('--save_imgs', type=str2bool, default=True)
-        parser.add_argument('--visual_full_imgs', type=str2bool, default=False)
+        parser.add_argument('--print_freq',         type=int,       default=100)
+        parser.add_argument('--test_every',         type=int,       default=1)
+        parser.add_argument('--save_epoch_freq',    type=int,       default=1)
+        parser.add_argument('--calc_metrics',       type=str2bool,  default=True)
+        parser.add_argument('--save_imgs',          type=str2bool,  default=True)
+        parser.add_argument('--visual_full_imgs',   type=str2bool,  default=False)
 
-        parser.add_argument('--n_scales', type=int, default=3, help='multi-scale deblurring level')
-        parser.add_argument('--n_feats', type=int, default=64, help='number of feature maps')
-        parser.add_argument('--rgb_range', type=int, default=1, help='RGB pixel value ranging from 0')
+        parser.add_argument('--n_scales',           type=int,       default=3, help='multi-scale deblurring level')
+        parser.add_argument('--n_feats',            type=int,       default=64, help='number of feature maps')
+        parser.add_argument('--rgb_range',          type=int,       default=1, help='RGB pixel value ranging from 0')
 
         self.initialized = True
         return parser

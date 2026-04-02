@@ -39,7 +39,7 @@ class CustomDatasetDataLoader():
             batch_size=opt.batch_size if split=='train' else 1,
             shuffle=opt.shuffle and split=='train',
             num_workers=int(opt.num_dataloader), 
-            drop_last=opt.drop_last)
+            drop_last=opt.drop_last)                                          
 
     def load_data(self):
         return self
